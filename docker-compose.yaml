@@ -1,7 +1,7 @@
 services:
 
   backend:
-    image: my-backend
+    image: ${BACKEND_IMAGE:-my-backend}
     build: ./backend
     volumes:
       - backend_db:/var/www/html/data
@@ -15,7 +15,7 @@ services:
     restart: unless-stopped
 
   frontend:
-    image: my-frontend
+    image: ${FRONTEND_IMAGE:-my-frontend}
     build: ./frontend
     ports:
       - "8081:80"
