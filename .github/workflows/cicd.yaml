@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate Compose
+        run: docker compose config
+
+      - name: Build images
+        run: docker compose build --no-cache backend frontend
+
+      - name: Start application
+        run: docker compose up -d
+
+      - name: Check backend health
+        run: |
+          for i in {1..30}; do
+            if docker compose ps backend | grep -q "healthy"; then
+              echo "Backend is healthy"
+              exit 0
+            fi
+            echo "Waiting for backend..."
+            sleep 2
+          done
+
+          echo "Backend did not become healthy"
+          docker compose ps
+          docker compose logs backend
+          exit 1
+
+      - name: Smoke test
+        run: curl --fail http://localhost:8081/api/health
+
+      - name: Stop application
+        if: always()
+        run: docker compose down

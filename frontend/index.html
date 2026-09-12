@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>DevOps Pet Project</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+        }
+
+        input {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-right: 10px;
+        }
+
+        #result {
+            margin-top: 30px;
+            padding: 15px;
+            background: #eee;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>DevOps Pet Project</h1>
+
+<h2>Register</h2>
+
+<input
+    id="registerUsername"
+    placeholder="Username"
+>
+
+<input
+    id="registerPassword"
+    type="password"
+    placeholder="Password"
+>
+
+<button onclick="register()">
+    Register
+</button>
+
+
+<h2>Login</h2>
+
+<input
+    id="loginUsername"
+    placeholder="Username"
+>
+
+<input
+    id="loginPassword"
+    type="password"
+    placeholder="Password"
+>
+
+<button onclick="login()">
+    Login
+</button>
+
+<button onclick="health()">
+    Health
+</button>
+
+
+<div id="result">
+    Waiting...
+</div>
+
+
+<script>
+
+async function register() {
+
+    const username =
+        document.getElementById('registerUsername').value;
+
+    const password =
+        document.getElementById('registerPassword').value;
+
+    const response = await fetch('/api/register', {
+
+        method: 'POST',
+
+        headers: {
+            'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify({
+            username: username,
+            password: password
+        })
+    });
+
+    const data = await response.json();
+
+    showResult(data);
+}
+
+
+async function login() {
+
+    const username =
+        document.getElementById('loginUsername').value;
+
+    const password =
+        document.getElementById('loginPassword').value;
+
+    const response = await fetch('/api/login', {
+
+        method: 'POST',
+
+        headers: {
+            'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify({
+            username: username,
+            password: password
+        })
+    });
+
+    const data = await response.json();
+
+    showResult(data);
+}
+
+
+async function health() {
+
+    const response =
+        await fetch('/api/health');
+
+    const data =
+        await response.json();
+
+    showResult(data);
+}
+
+
+function showResult(data) {
+
+    document.getElementById('result').textContent =
+        JSON.stringify(data, null, 2);
+}
+
+</script>
+
+</body>
+
+</html>

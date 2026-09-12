@@ -1,0 +1,34 @@
+services:
+
+  backend:
+    image: my-backend
+    build: ./backend
+    volumes:
+      - backend_db:/var/www/html/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  frontend:
+    image: my-frontend
+    build: ./frontend
+    ports:
+      - "8081:80"
+    networks:
+      - app-network
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  backend_db:
+
+networks:
+  app-network:
+    driver: bridge
